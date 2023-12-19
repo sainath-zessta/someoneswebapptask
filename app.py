@@ -21,33 +21,84 @@ UserModel for interacting with applications
 
 
 class UserModel(db.Document):
-    _id = db.StringField()
-    userName = db.StringField()
-    password = db.StringField()
+    """
+    This class represents a user in the system.
+
+    Attributes:
+        _id (str): The unique ID of the user.
+        userName (str): The username of the user.
+        password (str): The password of the user.
+
+    Methods:
+        delete(self, _id): This method deletes a user from the system.
+        to_json(self): This method returns a JSON representation of the object.
+        getID(self): This method returns the ID of the user.
+    """
+
+    _id = db.StringField(primary_key=True)
+    userName = db.StringField(required=True, unique=True)
+    password = db.StringField(required=True)
 
     def delete(self, _id):
+        """
+        This method deletes a user from the system.
+
+        Args:
+            _id (str): The ID of the user to be deleted.
+
+        Returns:
+            list: A list containing the deleted user.
+        """
         userList = []
         userList = list(filter(lambda x: x["_id"] != _id, userList))
         return userList + "deleted"
 
     def to_json(self):
+        """
+        This method returns a JSON representation of the object.
+
+        Returns:
+            dict: A JSON representation of the object.
+        """
         return {
             "_id": self._id,
             "userName": self.userName,
         }
 
     def getID(self):
-        return self._id
+        """
+        This method returns the ID of the user.
 
+        Returns:
+            str: The ID of the user.
+        """
+        return self._id
 
 """
 DB Model for Personal Details
 """
 
-
 class PersonalDetailsModel(db.Document):
-    _id = db.StringField()
-    userID = db.ObjectIdField()
+    """
+    This class represents the personal details of a user.
+
+    Attributes:
+        _id (str): The unique ID of the user.
+        userID (ObjectId): The ID of the user.
+        firstName (str): The first name of the user.
+        lastName (str): The last name of the user.
+        email (str): The email ID of the user.
+        mobile (str): The mobile number of the user.
+        address (str): The address of the user.
+        gender (str): The gender of the user.
+
+    Methods:
+        delete(self, _id): This method deletes a personal details from the system.
+        to_json(self): This method returns a JSON representation of the object.
+    """
+
+    _id = db.StringField(primary_key=True)
+    userID = db.ObjectIdField(required=True)
     firstName = db.StringField(default="N/A")
     lastName = db.StringField(default="N/A")
     email = db.StringField(default="N/A")
@@ -56,6 +107,15 @@ class PersonalDetailsModel(db.Document):
     gender = db.StringField(default="N/A")
 
     def delete(self, _id):
+        """
+        This method deletes a personal details from the system.
+
+        Args:
+            _id (str): The ID of the personal details to be deleted.
+
+        Returns:
+            list: A list containing the deleted personal details.
+        """
         PersonalDetailsList = []
         PersonalDetailsList = list(
             filter(lambda x: x["_id"] != _id, PersonalDetailsList)
@@ -63,6 +123,12 @@ class PersonalDetailsModel(db.Document):
         return PersonalDetailsList + "deleted"
 
     def to_json(self):
+        """
+        This method returns a JSON representation of the object.
+
+        Returns:
+            dict: A JSON representation of the object.
+        """
         return {
             "_id": self._id,
             "userID": self.userID,
@@ -79,10 +145,27 @@ class PersonalDetailsModel(db.Document):
 Employees Model
 """
 
-
 class EmployeesModel(db.Document):
-    _id = db.StringField()
-    userID = db.ObjectIdField()
+    """
+    This class represents the employees details of a user.
+
+    Attributes:
+        _id (str): The unique ID of the user.
+        userID (ObjectId): The ID of the user.
+        employeeName (str): The name of the employee.
+        workEmail (str): The work email of the employee.
+        workPhone (str): The work phone of the employee.
+        companyName (str): The company name of the employee.
+        designation (str): The designation of the employee.
+        department (str): The department of the employee.
+
+    Methods:
+        delete(self, _id): This method deletes an employees details from the system.
+        to_json(self): This method returns a JSON representation of the object.
+    """
+
+    _id = db.StringField(primary_key=True)
+    userID = db.ObjectIdField(required=True)
     employeeName = db.StringField(default="N/A")
     workEmail = db.StringField(default="N/A")
     workPhone = db.StringField(default="N/A")
@@ -91,11 +174,26 @@ class EmployeesModel(db.Document):
     department = db.StringField(default="N/A")
 
     def delete(self, _id):
+        """
+        This method deletes an employees details from the system.
+
+        Args:
+            _id (str): The ID of the employees details to be deleted.
+
+        Returns:
+            list: A list containing the deleted employees details.
+        """
         EmployeesList = []
         EmployeesList = list(filter(lambda x: x["_id"] != _id, EmployeesList))
         return EmployeesList + "deleted"
 
     def to_json(self):
+        """
+        This method returns a JSON representation of the object.
+
+        Returns:
+            dict: A JSON representation of the object.
+        """
         return {
             "_id": self._id,
             "userID": self.userID,
@@ -107,29 +205,52 @@ class EmployeesModel(db.Document):
             "department": self.department,
         }
 
-
 """
 Model for RBAC
 """
 
 
 class RBACModel(db.Document):
-    _id = db.StringField()
-    userID = db.ObjectIdField()
+    """
+    This class represents the role based access control details of a user.
+
+    Attributes:
+        _id (str): The unique ID of the user.
+        userID (ObjectId): The ID of the user.
+        role (str): The role of the user.
+
+    Methods:
+        delete(self): This method deletes an RBAC details from the system.
+        to_json(self): This method returns a JSON representation of the object.
+    """
+
+    _id = db.StringField(primary_key=True)
+    userID = db.ObjectIdField(required=True)
     role = db.StringField(default="N/A")
 
     def delete(self):
+        """
+        This method deletes an RBAC details from the system.
+
+        Returns:
+            list: A list containing the deleted RBAC details.
+        """
         RBACList = []
         RBACList = list(filter(lambda x: x["_id"] != self._id, RBACList))
         return RBACList + "deleted"
 
     def to_json(self):
+        """
+        This method returns a JSON representation of the object.
+
+        Returns:
+            dict: A JSON representation of the object.
+        """
         return {
             "_id": self._id,
             "userID": self.userID,
             "role": self.role,
         }
-
 
 @app.route("/", methods=["GET"])
 def index():
@@ -172,20 +293,58 @@ def index():
                         "workPhone",
                         "companyName",
                         "designation",
-                        "department",
-                        "role",
-                    ],
-                },
-                {"method": "GET", "route": "/logout", "description": "Logout Page"},
-            ],
-        }
-    )
+                    ]
+                }
+            ]
+        })
 
 
 @app.route("/register", methods=["POST"])
+# This function registers a new user in the system.
+# It takes in the following parameters:
+#   userName (str): The username of the user.
+#   password (str): The password of the user.
+#   firstName (str): The first name of the user.
+#   lastName (str): The last name of the user.
+#   email (str): The email ID of the user.
+#   mobile (str): The mobile number of the user.
+#   address (str): The address of the user.
+#   gender (str): The gender of the user.
+#   workEmail (str): The work email of the employee.
+#   workPhone (str): The work phone of the employee.
+#   companyName (str): The company name of the employee.
+#   designation (str): The designation of the employee.
+#   department (str): The department of the employee.
+#   role (str): The role of the user.
+# It saves the user information to the database and creates a session for the user.
+# If the user already exists, it returns an error.
+# If there is an error saving the user information, it returns an error.
+# Otherwise, it returns a success message.
 def register():
+    """
+    This function registers a new user in the system.
+
+    Args:
+        userName (str): The username of the user.
+        password (str): The password of the user.
+        firstName (str): The first name of the user.
+        lastName (str): The last name of the user.
+        email (str): The email ID of the user.
+        mobile (str): The mobile number of the user.
+        address (str): The address of the user.
+        gender (str): The gender of the user.
+        workEmail (str): The work email of the employee.
+        workPhone (str): The work phone of the employee.
+        companyName (str): The company name of the employee.
+        designation (str): The designation of the employee.
+        department (str): The department of the employee.
+        role (str): The role of the user.
+
+    Returns:
+        dict: A JSON object containing the message and status code.
+    """
+    # Parse the request parameters
     parseRequestParameters = request.values
-    # return jsonify(parseRequestParameters)
     userName = parseRequestParameters.get("userName")
     password = parseRequestParameters.get("password")
     firstName = parseRequestParameters.get("firstName")
@@ -202,18 +361,21 @@ def register():
     role = parseRequestParameters.get("role")
 
     # USERCREATIONLOGIC
-    addNewUsertoUserTable = UserModel(userName=userName, password=password)
-
-    if UserModel.objects(userName=userName).count() > 0:
+    # Check if the user already exists
+    if UserModel.objects(userName=userName).count() >= 0:
+        # If the user exists, return an error
         return jsonify({"message": "User Already Exists"})
     else:
-        # IF NOT SAVING USERNAME to DATABASE
+        # If the user does not exist, create a new user
+        # Save the user information to the database
         try:
+            addNewUsertoUserTable = UserModel(userName=userName, password=password)
             addNewUsertoUserTable.save()
 
+            # Get the object ID of the new user
             objectID = ObjectId(addNewUsertoUserTable.pk)
 
-            # SAVING PASSED PARSONAL DETAILS
+            # Save the personal details of the user
             addNewUsertoPersonalDetailsTable = PersonalDetailsModel(
                 userID=objectID,
                 firstName=firstName,
@@ -223,12 +385,9 @@ def register():
                 address=address,
                 gender=gender,
             )
-
-            # TRIGGER SAVE
-
             addNewUsertoPersonalDetailsTable.save()
 
-            # Adding Employee Details
+            # Save the employee details of the user
             addNewUsertoEmployeesTable = EmployeesModel(
                 userID=objectID,
                 employeeName=firstName,
@@ -238,36 +397,53 @@ def register():
                 designation=designation,
                 department=department,
             )
-
-            # Trigger Save
             addNewUsertoEmployeesTable.save()
 
-            # Adding RBAC Details
+            # Save the RBAC details of the user
             addNewUsertoRBACTable = RBACModel(userID=objectID, role=role)
-
-            # Trigger Save
             addNewUsertoRBACTable.save()
+
+            # Create a session for the user
             session["userID"] = objectID
             session["role"] = role
 
+            # Return a success message
             return jsonify({"message": "User Created and Session Started"})
         except:
+            # If there is an error, return an error message
             return jsonify({"message": "Something went wrong", "status": 500})
 
 
 @app.route("/login", methods=["POST"])
+# This function handles user login requests.
+# It checks if the user is already logged in, and if not, it authenticates the user using the provided credentials.
+# If the credentials are valid, it creates a session for the user and returns a success message.
+# If the credentials are invalid, it returns an error message.
 def login():
+    """
+    Login Route
+
+    Args:
+        userName (str): The username of the user.
+        password (str): The password of the user.
+
+    Returns:
+        dict: A JSON object containing the message and status code.
+    """
     try:
         if session["userID"] != None:
             return jsonify({"ERROR": {"message": "Already Logged In"}})
     except:
         pass
+    # Parse the request parameters
     parseRequestParameters = request.values
     userName = parseRequestParameters.get("userName")
     password = parseRequestParameters.get("password")
+    # Check if the user exists in the database
     tempUserObjFetch = UserModel.objects(userName=userName, password=password).count()
 
     if tempUserObjFetch > 0:
+        # Create a session for the user
         session["userID"] = userName
         return jsonify({"message": "Logged In Successfully"})
     else:
@@ -275,14 +451,34 @@ def login():
 
 
 @app.route("/logout/", methods=GET_POST)
+# This function handles user logout requests.
+# It clears the session data and returns a success message.
 def logout():
+    """
+    This function handles user logout requests.
+    It clears the session data and returns a success message.
+
+    Returns:
+        dict: A JSON object containing the message and status code.
+    """
     session.clear()
     return jsonify({"message": "Logged Out Successfully"})
 
 
 @app.route("/user/get", methods=GET_POST)
+# This function retrieves the user details based on the user ID.
+# It returns a JSON object containing the user details.
 def getUser():
-    
+    """
+    This function retrieves the user details based on the user ID.
+    It returns a JSON object containing the user details.
+
+    Args:
+        id (str): The ID of the user.
+
+    Returns:
+        dict: A JSON object containing the user details.
+    """
     if session.get("userID") == None:
         return jsonify({"ERROR": {"message": "Not Logged In"}})
     else:
@@ -322,8 +518,6 @@ def getUser():
         }
 
         return returnJsonFile
-   
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)
