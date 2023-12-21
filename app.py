@@ -522,6 +522,23 @@ def getUser():
 
 @app.route("/user/update", methods=["PUT"])
 def updateUser():
+    """
+    Update User
+
+    Update the user details based on the id.
+
+    Args:
+        id (str): The ID of the user.
+        personalDetails (dict): The personal details of the user.
+        employeeDetails (dict): The employee details of the user.
+        RBACModelDetails (dict): The RBAC details of the user.
+
+    Returns:
+        dict: A JSON object containing the success message.
+
+    Raises:
+        Exception: If there is an error updating the user details.
+    """
     if checkLogin() == False:
         return jsonify({"ERROR": {"message": "Not Logged In"}})
 
@@ -555,6 +572,17 @@ def updateUser():
 
 @app.route("/user/delete", methods=["DELETE"])
 def deleteUser():
+    """
+    This function handles user logout requests.
+    It clears the session data and returns a success message.
+
+    Args:
+        id (str): The ID of the user to be deleted.
+
+    Returns:
+        dict: A JSON object containing the message and status code.
+    """
+    # Check for Login
     if checkLogin() == False:
         return jsonify({"ERROR": {"message": "Not Logged In"}})
 
@@ -565,7 +593,7 @@ def deleteUser():
         
         Objid = ObjectId(parseRequestParameters.get("id"))
         
-        
+        # Creating Delete Statements
         DeleteUserDetails = UserModel.objects.filter(id=Objid).delete()
         DeleteUserPersonalDetails =  PersonalDetailsModel.objects.filter(id=Objid).delete()
         DeleteUserEmployementDetails = EmployeesModel.objects.filter(id=Objid).delete()
