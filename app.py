@@ -1,8 +1,10 @@
+import json
 from logging import exception
 from flask_mongoengine import MongoEngine
 from flask import request, session, redirect, url_for
 from flask import Flask, jsonify
 from bson.objectid import ObjectId
+from utils import writetoPDF
 
 GET_POST = ["GET", "POST"]
 
@@ -120,9 +122,7 @@ class PersonalDetailsModel(db.Document):
             list: A list containing the deleted personal details.
         """
         PersonalDetailsList = []
-        PersonalDetailsList = list(
-            filter(lambda x: x["id"] != id, PersonalDetailsList)
-        )
+        PersonalDetailsList = list(filter(lambda x: x["id"] != id, PersonalDetailsList))
         return PersonalDetailsList + "deleted"
 
     def to_json(self):
@@ -590,20 +590,56 @@ def deleteUser():
         parseRequestParameters = request.values
         if parseRequestParameters.get("id") is None:
             return jsonify({"ERROR": {"message": "Invalid Request"}})
-        
+
         Objid = ObjectId(parseRequestParameters.get("id"))
-        
+
         # Creating Delete Statements
         DeleteUserDetails = UserModel.objects.filter(id=Objid).delete()
-        DeleteUserPersonalDetails =  PersonalDetailsModel.objects.filter(id=Objid).delete()
+        DeleteUserPersonalDetails = PersonalDetailsModel.objects.filter(
+            id=Objid
+        ).delete()
         DeleteUserEmployementDetails = EmployeesModel.objects.filter(id=Objid).delete()
         DeleteUserRABC = RBACModel.objects.filter(id=Objid).delete()
-        
+
         logout()
         return jsonify({"message": "User Deleted Successfully", "id": Objid})
-    
+
     except:
         return jsonify({"ERROR": {"message": "Something went wrong"}})
+
+
+@app.route("/user/profile", methods=["GET"])
+def getUserProfile():
+    if checkLogin() == False:
+        return jsonify({"ERROR": {"message": "Not Logged In"}})
+    parseRequestParameters = request.values
+    obj = ObjectId(parseRequestParameters.get("id"))
+    tempUserObjFetch = UserModel.objects.filter(id=obj).first()
+    tempUserPersonalObjFetch = PersonalDetailsModel.objects.filter(userID=obj).first()
+    tempUserEmployeesObjFetch = EmployeesModel.objects.filter(userID=obj).first()
+    tempRoleObjFetch = RBACModel.objects.filter(userID=obj).first()
+    # dict(tempUserObjFetch).pop('_id')
+    contenttoWrite = {
+        "name": parseRequestParameters.get("id"),
+        "title": "Zessta Softwares",
+        # "timestamp": str(time.asctime(time.localtime()))
+        "dict": {
+            "User Details": tempUserObjFetch.__dict__,
+            # "Personal Details": tempUserPersonalObjFetch,
+            # "Employement Details": tempUserEmployeesObjFetch,
+            # "Role": tempRoleObjFetch,
+        },
+    }
+    return jsonify(writetoPDF(contenttoWrite))
+
+
+def filterObjectIDfromtheDict(dictpass):
+    keystoremove = ["_id", "password"]
+    key, value = dictpass
+    if key in keystoremove:
+        return False
+    else:
+        return True
 
 
 if __name__ == "__main__":
