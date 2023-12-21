@@ -1,0 +1,216 @@
+{
+	"info": {
+		"_postman_id": "a5c06b81-0134-4b4e-8459-88cb50eefd87",
+		"name": "WebAppCrud",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31890544"
+	},
+	"item": [
+		{
+			"name": "GetUser",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/user/get?id={{id}}",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"user",
+						"get"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"pm.environment.set(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost/register?userName=test&password=test&firstName=Name&designation=Intern&lastName=noValue&role=NORMAL_IAM",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"register"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "test"
+						},
+						{
+							"key": "password",
+							"value": "test"
+						},
+						{
+							"key": "firstName",
+							"value": "Name"
+						},
+						{
+							"key": "designation",
+							"value": "Intern"
+						},
+						{
+							"key": "lastName",
+							"value": "noValue"
+						},
+						{
+							"key": "role",
+							"value": "NORMAL_IAM"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"pm.environment.set(\"id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost/login?userName=test&password=test",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "test"
+						},
+						{
+							"key": "password",
+							"value": "test"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LogoutUser",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/logout",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdaUser",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"personalDetails\":\r\n    {\r\n        \"firstName\": \"UpdatedName\"\r\n    },\r\n    \"employeeDetails\":\r\n    {\r\n        \"companyName\": \"Zessta Tech\"\r\n    },\r\n    \"RBAC\":\r\n    {\r\n        \"role\": \"NewInternRole\"\r\n    }\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/user/update?id={{id}}",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"user",
+						"update"
+					],
+					"query": [
+						{
+							"key": "test",
+							"value": "t",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUser",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost/user/delete?id={{id}}",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"user",
+						"delete"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
