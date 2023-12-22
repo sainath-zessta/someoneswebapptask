@@ -1,5 +1,6 @@
 import json
 from logging import exception
+from tabnanny import check
 from flask_mongoengine import MongoEngine
 from flask import request, session, redirect, url_for
 from flask import Flask, jsonify
@@ -56,7 +57,7 @@ class UserModel(db.Document):
         userList = list(filter(lambda x: x["id"] != id, userList))
         return userList + "deleted"
 
-    def to_json(self):
+    def to_Dict(self):
         """
         This method returns a JSON representation of the object.
 
@@ -64,7 +65,7 @@ class UserModel(db.Document):
             dict: A JSON representation of the object.
         """
         return {
-            "id": self.id,
+            # "id": self.id,
             "userName": self.userName,
         }
 
@@ -125,7 +126,7 @@ class PersonalDetailsModel(db.Document):
         PersonalDetailsList = list(filter(lambda x: x["id"] != id, PersonalDetailsList))
         return PersonalDetailsList + "deleted"
 
-    def to_json(self):
+    def to_Dict(self):
         """
         This method returns a JSON representation of the object.
 
@@ -133,8 +134,8 @@ class PersonalDetailsModel(db.Document):
             dict: A JSON representation of the object.
         """
         return {
-            "id": self.id,
-            "userID": self.userID,
+            # "id": self.id,
+            # "userID": self.userID,
             "firstName": self.firstName,
             "lastName": self.lastName,
             "email": self.email,
@@ -191,7 +192,7 @@ class EmployeesModel(db.Document):
         EmployeesList = list(filter(lambda x: x["id"] != id, EmployeesList))
         return EmployeesList + "deleted"
 
-    def to_json(self):
+    def to_Dict(self):
         """
         This method returns a JSON representation of the object.
 
@@ -199,8 +200,8 @@ class EmployeesModel(db.Document):
             dict: A JSON representation of the object.
         """
         return {
-            "id": self.id,
-            "userID": self.userID,
+            # "id": self.id,
+            # "userID": self.userID,
             "employeeName": self.employeeName,
             "workEmail": self.workEmail,
             "workPhone": self.workPhone,
@@ -244,7 +245,7 @@ class RBACModel(db.Document):
         RBACList = list(filter(lambda x: x["id"] != self.id, RBACList))
         return RBACList + "deleted"
 
-    def to_json(self):
+    def to_Dict(self):
         """
         This method returns a JSON representation of the object.
 
@@ -252,8 +253,8 @@ class RBACModel(db.Document):
             dict: A JSON representation of the object.
         """
         return {
-            "id": self.id,
-            "userID": self.userID,
+            # "id": self.id,
+            # "userID": self.userID,
             "role": self.role,
         }
 
@@ -263,45 +264,9 @@ def index():
     return jsonify(
         {
             "message": "Welcome to Zessta Software Services",
-            "routes": [
-                {"method": "GET", "route": "/", "description": "Home Page"},
-                {
-                    "method": "POST",
-                    "route": "/login",
-                    "description": "Login Page",
-                    "parameters": {
-                        "userName": {
-                            "type": "string",
-                            "required": True,
-                            "description": "User Name",
-                        },
-                        "password": {
-                            "type": "string",
-                            "required": True,
-                            "description": "Password",
-                        },
-                    },
-                },
-                {
-                    "method": "POST",
-                    "route": "/register",
-                    "description": "Register Page",
-                    "parameters": [
-                        "userName",
-                        "password",
-                        "firstName",
-                        "lastName",
-                        "email",
-                        "mobile",
-                        "address",
-                        "gender",
-                        "workEmail",
-                        "workPhone",
-                        "companyName",
-                        "designation",
-                    ],
-                },
-            ],
+            "status": "Server Live"
+            
+          
         }
     )
 
@@ -608,29 +573,31 @@ def deleteUser():
         return jsonify({"ERROR": {"message": "Something went wrong"}})
 
 
-@app.route("/user/profile", methods=["GET"])
-def getUserProfile():
+@app.route("/user/sendProfileEmail", methods=["GET"])
+def sendProfileEmail():
     if checkLogin() == False:
         return jsonify({"ERROR": {"message": "Not Logged In"}})
     parseRequestParameters = request.values
     obj = ObjectId(parseRequestParameters.get("id"))
+    email = parseRequestParameters.get("email")
     tempUserObjFetch = UserModel.objects.filter(id=obj).first()
     tempUserPersonalObjFetch = PersonalDetailsModel.objects.filter(userID=obj).first()
     tempUserEmployeesObjFetch = EmployeesModel.objects.filter(userID=obj).first()
     tempRoleObjFetch = RBACModel.objects.filter(userID=obj).first()
     # dict(tempUserObjFetch).pop('_id')
     contenttoWrite = {
-        "name": parseRequestParameters.get("id"),
+        "name": str(parseRequestParameters.get("id")),
         "title": "Zessta Softwares",
         # "timestamp": str(time.asctime(time.localtime()))
         "dict": {
-            "User Details": tempUserObjFetch.__dict__,
-            # "Personal Details": tempUserPersonalObjFetch,
-            # "Employement Details": tempUserEmployeesObjFetch,
-            # "Role": tempRoleObjFetch,
+            "User Details": tempUserObjFetch.to_Dict(),
+            "Personal Details": tempUserPersonalObjFetch.to_Dict(),
+            "Employement Details": tempUserEmployeesObjFetch.to_Dict(),
+            "Role": tempRoleObjFetch.to_Dict(),
         },
     }
-    return jsonify(writetoPDF(contenttoWrite))
+    return jsonify(writetoPDF(contenttoWrite, email))
+    # return j
 
 
 def filterObjectIDfromtheDict(dictpass):
