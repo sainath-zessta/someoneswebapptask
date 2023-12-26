@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: sainathzesstasomeoneswebapptask 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sainathzesstasomeoneswebapptask
+  template:
+    metadata:
+      labels:
+        app: sainathzesstasomeoneswebapptask 
+    spec:
+      containers:
+        - name: sainathzesstasomeoneswebapptask 
+          image: zesstasainath.azurecr.io/sainathzesstasomeoneswebapptask
+          ports:
+          - containerPort: 80
