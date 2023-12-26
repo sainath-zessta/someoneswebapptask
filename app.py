@@ -1,6 +1,3 @@
-import json
-from logging import exception
-from tabnanny import check
 from flask_mongoengine import MongoEngine
 from flask import request, session, redirect, url_for
 from flask import Flask, jsonify
@@ -13,7 +10,7 @@ GET_POST = ["GET", "POST"]
 # APPLICATION CONFIGURATION
 app = Flask(__name__)
 app.secret_key = "ZesstaSoftwareServicesPvtLtdHyderabadSainathSapaIntern"
-app.config["MONGODB_SETTINGS"] = {"db": "zessta", "host": "localhost", "port": 27017}
+app.config["MONGODB_SETTINGS"] = {"db": "zessta", "host": "MongoDB", "port": 27017}
 
 db = MongoEngine()
 db.init_app(app)
@@ -262,12 +259,7 @@ class RBACModel(db.Document):
 @app.route("/", methods=["GET"])
 def index():
     return jsonify(
-        {
-            "message": "Welcome to Zessta Software Services",
-            "status": "Server Live"
-            
-          
-        }
+        {"message": "Welcome to Zessta Software Services", "status": "Server Live"}
     )
 
 
@@ -389,26 +381,26 @@ def login():
     Returns:
         dict: A JSON object containing the message and status code.
     """
-    try:
-        if session["userID"] != None:
-            return jsonify({"ERROR": {"message": "Already Logged In"}})
-    except:
-        pass
-    # Parse the request parameters
-    parseRequestParameters = request.values
-    userName = parseRequestParameters.get("userName")
-    password = parseRequestParameters.get("password")
-    # Check if the user exists in the database
-    tempUserObjFetch = UserModel.objects(userName=userName, password=password)
-
-    if tempUserObjFetch.count() > 0:
-        # Create a session for the user
-        session["userID"] = userName
-        return jsonify(
-            {"message": "Logged In Successfully", "id": tempUserObjFetch.first().id}
-        )
+    if checkLogin() == True:
+        return jsonify({"message": "Already Logged In"})
     else:
-        return jsonify({"message": "Invalid Credentials"})
+        
+    # Parse the request parameters
+        parseRequestParameters = request.values
+        userName = parseRequestParameters.get("userName")
+        password = parseRequestParameters.get("password")
+        # Check if the user exists in the database
+        tempUserObjFetch = UserModel.objects(userName=userName, password=password)
+
+        if tempUserObjFetch.count() > 0:
+            # Create a session for the user
+            session["userID"] = userName
+            
+            return jsonify(
+                {"message": "Logged In Successfully", "id": str(tempUserObjFetch.first().id)}
+            )
+        else:
+            return jsonify({"message": "Invalid Credentials"})
 
 
 @app.route("/logout/", methods=GET_POST)
